@@ -1,7 +1,6 @@
 from cnnClassifier.constants import *
 from cnnClassifier.utils.common import read_yaml,create_directories
-
-from cnnClassifier.entity.config_entity import DataIngestionConfig,PrepareBaseModelConfig
+from cnnClassifier.entity.config_entity import DataIngestionConfig,PrepareBaseModelConfig,PrepareCallbacksConfig
 
 class ConfigurationManager:
 #reading the YAML file
@@ -46,3 +45,27 @@ class ConfigurationManager:
         )
 
         return prepare_base_model_config   
+
+#configuration manager for callbacks
+
+class ConfigurationManager:
+    def __init__(self,config_file_path = CONFIG_FILE_PATH,params_file_path = PARAMS_FILE_PATH):
+        self.config = read_yaml(config_file_path) #returns configbox objects
+        self.params = read_yaml(params_file_path)
+
+        create_directories([self.config.artifacts_root])
+    def get_prepare_callback_config(self) -> PrepareCallbacksConfig:
+        config = self.config.prepare_callbacks
+        model_ckpt_dir = os.path.dirname(config.checkpoint_model_filepath)
+        create_directories([
+            Path(model_ckpt_dir),
+            Path(config.tensorboard_root_log_dir)
+        ])
+
+        prepare_callback_config = PrepareCallbacksConfig(
+            root_dir=Path(config.root_dir),
+            tensorboard_root_log_dir=Path(config.tensorboard_root_log_dir),
+            checkpoint_model_filepath=Path(config.checkpoint_model_filepath)
+        )
+
+        return prepare_callback_config

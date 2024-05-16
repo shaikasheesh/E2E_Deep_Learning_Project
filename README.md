@@ -1,4 +1,4 @@
-# chicken-Disease classification
+# End to End Deep Learning Image Classification Project : Chicken-Disease classification
 
 ## workflows
 1.Update config.yaml
